@@ -1,0 +1,1 @@
+fastapi uvicorn sqlalchemy pydantic streamlit python-jose passlib[bcrypt] python-multipart
