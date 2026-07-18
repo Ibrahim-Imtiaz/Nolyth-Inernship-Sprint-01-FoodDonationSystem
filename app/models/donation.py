@@ -15,3 +15,8 @@ class Donation(Base):
     "User",
     back_populates="donations"
     )
+    claimed_by = Column(
+    Integer,
+    ForeignKey("users.id"),
+    nullable=True
+    )

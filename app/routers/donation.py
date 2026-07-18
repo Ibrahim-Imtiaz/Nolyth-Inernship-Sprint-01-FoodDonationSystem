@@ -105,5 +105,73 @@ def delete_donation(
     "message": "Donation deleted successfully"
     }
 
+@router.get("/available-donations")
+def get_available_donations(
+    db: Session = Depends(get_db)
+):
+    donations = db.query(Donation).filter(
+        Donation.status == "Available"
+    ).all()
 
+    return donations
     
+@router.post("/claim/{donation_id}")
+def claim_donation(
+    donation_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    if current_user.role != "NGO":
+        raise HTTPException(
+            status_code=403,
+            detail="Only NGOs can claim donations"
+        )
+
+    donation = db.query(Donation).filter(
+        Donation.id == donation_id
+    ).first()
+
+    if not donation:
+        raise HTTPException(
+            status_code=404,
+            detail="Donation not found"
+        )
+
+    if donation.status == "Claimed":
+        raise HTTPException(
+            status_code=400,
+            detail="Donation has already been claimed"
+        )
+    
+    if donation.owner_id == current_user.id:
+        raise HTTPException(
+            status_code=400,
+            detail="You cannot claim your own donation"
+        )
+
+    donation.status = "Claimed"
+    donation.claimed_by = current_user.id
+
+    db.commit()
+    db.refresh(donation)
+
+    return donation
+
+@router.get("/my-claims")
+def get_my_claims(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    if current_user.role != "NGO":
+        raise HTTPException(
+            status_code=403,
+            detail="Only NGOs can view their claims"
+        )
+
+    claims = db.query(Donation).filter(
+        Donation.claimed_by == current_user.id
+    ).all()
+
+    return claims
