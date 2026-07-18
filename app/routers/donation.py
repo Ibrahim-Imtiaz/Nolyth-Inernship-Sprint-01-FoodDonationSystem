@@ -7,13 +7,14 @@ from app.core.auth import get_current_user
 from app.models.user import User
 from app.models.donation import Donation
 
-from app.schemas.donation import DonationCreate
+from app.schemas.donation import DonationCreate, DonationUpdate, DonationResponse
 
 from fastapi import HTTPException
-from app.schemas.donation import DonationUpdate
+
+from typing import List
 
 router = APIRouter()
-@router.post("/donations")
+@router.post("/donations",response_model=DonationResponse,status_code=201)
 def create_donation(
     donation: DonationCreate,
     db: Session = Depends(get_db),
@@ -32,7 +33,7 @@ def create_donation(
 
     return new_donation
 
-@router.get("/my-donations")
+@router.get("/my-donations", response_model=List[DonationResponse])
 def get_my_donations(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -43,7 +44,7 @@ def get_my_donations(
 
     return donations
     
-@router.put("/donations/{donation_id}")
+@router.put("/donations/{donation_id}",response_model=DonationResponse)
 def update_donation(
     donation_id: int,
     donation: DonationUpdate,
@@ -105,7 +106,7 @@ def delete_donation(
     "message": "Donation deleted successfully"
     }
 
-@router.get("/available-donations")
+@router.get("/available-donations",response_model=List[DonationResponse])
 def get_available_donations(
     db: Session = Depends(get_db)
 ):
@@ -158,7 +159,7 @@ def claim_donation(
 
     return donation
 
-@router.get("/my-claims")
+@router.get("/my-claims",response_model=List[DonationResponse])
 def get_my_claims(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)

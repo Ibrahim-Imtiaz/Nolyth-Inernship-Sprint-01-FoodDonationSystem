@@ -18,7 +18,7 @@ from app.core.auth import get_current_user
 router = APIRouter()
 
 
-@router.post("/register")
+@router.post("/register",status_code=201,summary="Register a new organization")
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
 
     existing_user = db.query(User).filter(User.email == user.email).first()
@@ -46,7 +46,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         "message": "User registered successfully"
     }
 
-@router.post("/login")
+@router.post("/login",summary="Authenticate user and return JWT")
 def login(user: UserLogin, db: Session = Depends(get_db)):
 
     existing_user = db.query(User).filter(User.email == user.email).first()

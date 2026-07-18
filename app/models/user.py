@@ -17,5 +17,5 @@ class User(Base):
 
     donations = relationship(
     "Donation",
-    back_populates="owner"
-    )
+    back_populates="owner",
+    foreign_keys="Donation.owner_id")
