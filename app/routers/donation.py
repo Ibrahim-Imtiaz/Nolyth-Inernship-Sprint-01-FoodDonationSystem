@@ -44,7 +44,7 @@ def get_my_donations(
 
     return donations
     
-@router.put("/donations/{donation_id}",response_model=DonationResponse)
+@router.put("/donations/{donation_id}")
 def update_donation(
     donation_id: int,
     donation: DonationUpdate,
@@ -73,9 +73,10 @@ def update_donation(
     existing_donation.pickup_address = donation.pickup_address
 
     db.commit()
-    db.refresh(existing_donation)
 
-    return existing_donation
+    return {
+        "message": "Donation updated successfully"
+    }
 
 @router.delete("/donations/{donation_id}")
 def delete_donation(
@@ -155,9 +156,10 @@ def claim_donation(
     donation.claimed_by = current_user.id
 
     db.commit()
-    db.refresh(donation)
 
-    return donation
+    return {
+        "message": "Donation claimed successfully"
+    }
 
 @router.get("/my-claims",response_model=List[DonationResponse])
 def get_my_claims(
