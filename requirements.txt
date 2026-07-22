@@ -1,1 +1,10 @@
-fastapi uvicorn sqlalchemy pydantic streamlit python-jose passlib[bcrypt] python-multipart
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+streamlit
+python-jose
+passlib[bcrypt]
+python-multipart
+bcrypt
+requests
